@@ -24,7 +24,7 @@ import pandas as pd
 import sys
 
 
-def matching_links(msg, tracked_sites):
+def match_links(msg, tracked_sites):
     """ Find links from Telegram messages that match tracked news sources
 
     Arguments:
@@ -32,7 +32,8 @@ def matching_links(msg, tracked_sites):
         tracked_sites {[type]} -- [description]
     """
     links = links_with_metadata(msg)
-    return (tracked_sites[0], "google.com")
+    # XXX actual matching here
+    return (tracked_sites[0], links[0])
 
 
 def tracked_channel_names():
@@ -54,6 +55,7 @@ def write_matches_to_file(messages, filename=None):
     Keyword Arguments:
         filename {[type]} -- [description] (default: {None})
     """
+    # XXX take the target file as argument?
     pass
 
 
@@ -77,13 +79,13 @@ def main(inputargs=None):
             # Skip forwarded messages to avoid doublecounting views
             if is_forwarded(msg):
                 continue
-            (matching_site, matching_links) = matching_links(msg, tracked_sites)
-            if matching_site:
+            (matched_site, matched_link) = match_links(msg, tracked_sites)
+            if matched_site:
                 matching_message = TelegramTrackedPost.from_telethon(
                     msg,
                     channel_name=channel,
-                    matching_url=matching_url,
-                    news_source=matching_site,
+                    matched_link=matched_link,
+                    news_source=matched_site,
                     batch_time=batch_start,
                 )
                 matching_messages.append(matching_message)

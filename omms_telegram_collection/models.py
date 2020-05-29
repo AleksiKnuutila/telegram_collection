@@ -59,6 +59,7 @@ class TrackedPost:
 @dataclass
 class TelegramTrackedPost(TrackedPost):
     telegram_message: str
+    # XXX here try to overwrite with defaults the parent attributes that are always zero in case of Telegram
     # page: str = ''
 
     #    es_record = {
@@ -78,15 +79,12 @@ class TelegramTrackedPost(TrackedPost):
 
     @classmethod
     def from_telethon(
-        cls, telethon_msg, *, channel_name, matching_url, news_source, batch_time=None
+        cls, telethon_msg, *, channel_name, matched_link, news_source, batch_time=None
     ):
         """ Map Telethon's message object to OMMS internal datastructure and construct new object """
         current_time = datetime.now()
         if not batch_time:
             batch_time = current_time
-
-        if hasattr('webpage', telethon_msg.media):
-          
 
         #    searched_site: str
         #    searched_link: str
@@ -101,6 +99,7 @@ class TelegramTrackedPost(TrackedPost):
         #    message: str
         #    sharing_account_handle: str
 
+        # XXX change this to return cls(..)
         attributes = {
             "platform": "Telegram",
             "batch_capture_time": str(current_time.timestamp()),
@@ -108,13 +107,16 @@ class TelegramTrackedPost(TrackedPost):
             "precise_capture_time": str(batch_time.timestamp()),
             "precise_capture_time_readable": str(batch_time),
             "created_time": str(telethon_msg.date.timestamp()),
-            "searched_site": news_source["domain"],
             "cat": news_source["cat"],
             "message": telethon_msg.message,
             "searched_site": news_source["short.link"],
             "searched_link": news_source["short.link"],
-            "found_link": matching_url,
+            "found_link": matched_link.url,
             "content_type": "link",
-            #            "caption":
+            "caption": matched_link.caption,
+            "description": matched_link.description,
+            "message": telethon_msg.message,
+            "sharing_account_handle": channel_name,
+            # XXX next step: how to bring channel metadata here?? do we need quick channel object.. probably yes, since we want follower count too
         }
         return cls(**attributes)
