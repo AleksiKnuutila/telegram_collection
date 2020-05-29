@@ -17,6 +17,7 @@ class TrackedPost:
     """ Parent class for data collected by OMMS scrapers for various platforms """
 
     platform: str
+    # api_qtype: ''
 
 
 #    capture_type: str
@@ -84,6 +85,9 @@ class TelegramTrackedPost(TrackedPost):
         if not batch_time:
             batch_time = current_time
 
+        if hasattr('webpage', telethon_msg.media):
+          
+
         #    searched_site: str
         #    searched_link: str
         #    api_qtype: str
@@ -104,9 +108,13 @@ class TelegramTrackedPost(TrackedPost):
             "precise_capture_time": str(batch_time.timestamp()),
             "precise_capture_time_readable": str(batch_time),
             "created_time": str(telethon_msg.date.timestamp()),
-            "searched_site": searched_site,
-            "cat": news_source.cat,
-            "page": channel_name,
+            "searched_site": news_source["domain"],
+            "cat": news_source["cat"],
             "message": telethon_msg.message,
+            "searched_site": news_source["short.link"],
+            "searched_link": news_source["short.link"],
+            "found_link": matching_url,
+            "content_type": "link",
+            #            "caption":
         }
         return cls(**attributes)

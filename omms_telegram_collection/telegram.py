@@ -8,6 +8,44 @@ from telethon.tl import functions
 
 from omms_telegram_collection.common import logger, config
 
+from dataclasses import make_dataclass
+
+
+def get_url_from_message(message, entity):
+    offset = entity["offset"]
+    length = entity["length"]
+    return message[offset : offset + length]
+
+
+def links_with_metadata(message):
+    LC = make_dataclass("LinkMetaData", ["url", "caption", "description"])
+    links = []
+    # Links in Telegram messages can be embedded (then found in message.media), or part of the
+    # text body of the message (when we can find them through message.entities)
+
+    if hasattr("webpage", message["media"]):
+        webpage = message.media.webpage
+        links.append(LC(webpage.url, webpage.title, webpage.description))
+
+    for entity in message.entities:
+        data = entity.to_dict()
+        if data["_"] == "MessageEntityTextUrl":
+            url = get_url_from_message(message.message, data)
+            if not url in [x.url for x in links]:
+                links.append(LC(url, "", ""))
+
+    return links
+
+
+def is_forwarded(message):
+    #                  if 'fwd_from' in obj and obj['fwd_from']:
+    #                    forwarded='forwarded'
+    #                    if obj['fwd_from']['channel_id']:
+    #                      forwarded = str(obj['fwd_from']['channel_id'])
+    #                    if obj['fwd_from']['channel_post']:
+    #                      forwarded = forwarded + ':' + str(obj['fwd_from']['channel_post'])
+    return False
+
 
 class SyncTelegramClient:
     def __init__(self):
