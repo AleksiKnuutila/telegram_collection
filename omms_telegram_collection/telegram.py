@@ -14,13 +14,15 @@ from dataclasses import make_dataclass
 def links_with_metadata(message):
     LC = make_dataclass("LinkMetaData", ["url", "caption", "description"])
     links = []
+
     # Links in Telegram messages can be embedded (then found in message.media), or part of the
     # text body of the message (when we can find them through message.entities)
-
     if hasattr(message.media, "webpage"):
         webpage = message.media.webpage
         links.append(LC(webpage.url, webpage.title, webpage.description))
 
+    if not message.entities:
+        return links
     for entity in message.entities:
         data = entity.to_dict()
         if data["_"] == "MessageEntityTextUrl":

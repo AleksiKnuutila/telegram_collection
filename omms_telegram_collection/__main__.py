@@ -19,6 +19,9 @@ from omms_telegram_collection.telegram import (
 )
 from omms_telegram_collection.models import TelegramTrackedPost
 
+from dataclasses import make_dataclass
+from itertools import filterfalse
+
 from datetime import datetime
 import pandas as pd
 import sys
@@ -33,12 +36,11 @@ def match_links(msg, tracked_sites):
     """
     links = links_with_metadata(msg)
     # XXX actual matching here
-    return (tracked_sites[0], links[0])
-
-
-def tracked_channel_names():
-    """ Get names of all tracked Telegram channels """
-    return ["TommyRobinsonNews"]
+    if not links:
+        return None
+    return make_dataclass("MatchedLink", ["link", "matched_site"])(
+        links[0], tracked_sites[0]
+    )
 
 
 def tracked_news_sources(filename):
@@ -46,7 +48,7 @@ def tracked_news_sources(filename):
     return pd.read_csv(filename, encoding="ISO-8859-1").to_dict("records")
 
 
-def write_matches_to_file(messages, filename=None):
+def write_messages_to_file(messages, filename=None):
     """[summary]
 
     Arguments:
@@ -67,30 +69,38 @@ def main(inputargs=None):
 
     client = SyncTelegramClient()
 
-    tracked_telegram_channels = tracked_channel_names()
     tracked_sites = tracked_news_sources(config["tracked_sites_csv_filename"])
     batch_start = datetime.now()
 
-    matching_messages = []
+    all_matched_messages = []
 
-    for channel in tracked_telegram_channels:
-        recent_messages = client.fetch_messages(channel, 300, 0)
-        for msg in recent_messages:
-            # Skip forwarded messages to avoid doublecounting views
-            if is_forwarded(msg):
-                continue
-            (matched_site, matched_link) = match_links(msg, tracked_sites)
-            if matched_site:
-                matching_message = TelegramTrackedPost.from_telethon(
-                    msg,
-                    channel_name=channel,
-                    matched_link=matched_link,
-                    news_source=matched_site,
-                    batch_time=batch_start,
-                )
-                matching_messages.append(matching_message)
+    for channel_name in config["tracked_telegram_channels"]:
 
-    write_matches_to_file(matching_messages)
+        channel_info = client.get_channel_info(channel_name)
+
+        recent_messages = client.fetch_messages(channel_name, 300, 0)
+        # Skip forwarded messages to avoid doublecounting views (cf. how Telegram views are calculated)
+        original_messages = [msg for msg in recent_messages if not is_forwarded(msg)]
+
+        matching_messages = zip(
+            original_messages,
+            [match_links(msg, tracked_sites) for msg in original_messages],
+        )
+        matching_messages = [
+            TelegramTrackedPost.from_telethon(
+                msg[0],
+                matched_link=msg[1].link,
+                news_source=msg[1].matched_site,
+                channel=channel_info,
+                batch_time=batch_start,
+            )
+            for msg in matching_messages
+            # match_links returns None if there is no match, and this is saved in second item of tuple
+            if msg[1]
+        ]
+        all_matched_messages = all_matched_messages + matching_messages
+
+    write_messages_to_file(all_matched_messages)
 
 
 if __name__ == "__main__":

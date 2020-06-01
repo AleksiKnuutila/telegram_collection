@@ -116,7 +116,8 @@ class TelegramTrackedPost(TrackedPost):
             "caption": matched_link.caption,
             "description": matched_link.description,
             "message": telethon_msg.message,
-            "sharing_account_handle": channel_name,
+            "sharing_account_handle": channel["chats"][0]["username"],
             # XXX next step: how to bring channel metadata here?? do we need quick channel object.. probably yes, since we want follower count too
         }
-        return cls(**attributes)
+        #        return cls(**attributes)
+        return cls(telegram_message=attributes["message"], platform="Telegram")
