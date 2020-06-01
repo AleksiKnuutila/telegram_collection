@@ -68,7 +68,9 @@ class SyncTelegramClient:
 
     def get_channel_info(self, channel):
         with self._client as client:
-            return client(functions.channels.GetFullChannelRequest(channel=channel))
+            return client(
+                functions.channels.GetFullChannelRequest(channel=channel)
+            ).to_dict()
 
     def get_channel_users(self, channel, limit=1000):
         """method to get participants from channel (we might not have privileges to get this data)

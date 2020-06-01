@@ -79,7 +79,7 @@ class TelegramTrackedPost(TrackedPost):
 
     @classmethod
     def from_telethon(
-        cls, telethon_msg, *, channel_name, matched_link, news_source, batch_time=None
+        cls, telethon_msg, *, channel, matched_link, news_source, batch_time=None
     ):
         """ Map Telethon's message object to OMMS internal datastructure and construct new object """
         current_time = datetime.now()
