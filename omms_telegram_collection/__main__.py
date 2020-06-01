@@ -20,7 +20,6 @@ from omms_telegram_collection.telegram import (
 from omms_telegram_collection.models import TelegramTrackedPost
 
 from dataclasses import make_dataclass
-from itertools import filterfalse
 
 from datetime import datetime
 import pandas as pd

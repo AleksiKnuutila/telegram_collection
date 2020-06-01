@@ -1,81 +1,77 @@
 from datetime import datetime
-from pydantic.dataclasses import dataclass
 
-# fieldnames = ['platform', 'capture_type', 'group_name',
-#               'batch_capture_time', 'batch_capture_time_readable', 'precise_capture_time', 'precise_capture_time_readable', 'created_time',
-#               'searched_site', 'searched_link', 'api_qtype', 'cat', 'page',
-#               'found_link', 'postUrl', 'content_type', 'caption', 'description', 'message',
-#               'sharing_account_handle', 'sharing_account_id', 'sharing_account_follower_count', 'sharing_account_statuses_count',
-#               'statistics_favourite_count', 'statistics_retweet_count', 'statistics_like_count', 'statistics_love_count',
-#               'statistics_comment_count', 'statistics_haha_count', 'statistics_sad_count', 'statistics_share_count',
-#               'statistics_thankful_count', 'statistics_wow_count', 'statistics_angry_count',
-#              'statistics_reddit_awards', 'statistics_reddit_score', 'statistics_reddit_crossposts']
+from pydantic.dataclasses import dataclass
+import attr
 
 
 @dataclass
 class TrackedPost:
     """ Parent class for data collected by OMMS scrapers for various platforms """
 
+    batch_capture_time: datetime
+    batch_capture_time_readable: str
+    precise_capture_time: datetime
+    precise_capture_time_readable: str
+    cat: str
+    found_link: str
+    content_type: str
+    description: str
+    caption: str
+    message: str
+    sharing_account_handle: str
+    sharing_account_id: int
+    sharing_account_follower_count: int or None
+    statistics_view_count: int or None
+    created_time: str
+    searched_site: str
+    searched_link: str
+    message_id: int
+
+    # Variables that may be overwritten by subclasses (must come last in dataclasses)
     platform: str
-    # api_qtype: ''
-
-
-#    capture_type: str
-#    batch_capture_time: str
-#    batch_capture_time_readable: str
-#    precise_capture_time: str
-#    precise_capture_time_readable: str
-#    created_time: str
-#    searched_site: str
-#    searched_link: str = ''
-#    api_qtype: str = ''
-#    cat: str
-#    page: str
-#    found_link: str
-#    postUrl: str
-#    content_type: str
-#    caption: str
-#    description: str
-#    message: str
-#    sharing_account_handle: str
-#    sharing_account_id: str
-#    sharing_account_follower_count: str
-#    sharing_account_statuses_count: str
-#    statistics_favourite_count: str
-#    statistics_retweet_count: str
-#    statistics_like_count: str
-#    statistics_love_count: str
-#    statistics_comment_count: str
-#    statistics_haha_count: str
-#    statistics_sad_count: str
-#    statistics_share_count: str
-#    statistics_thankful_count: str
-#    statistics_wow_count: str
-#    statistics_angry_count: str
-#    statistics_dislike_count: str
-#    statistics_view_count: str
+    capture_type: str
+    group_name: str
+    sharing_account_statuses_count: int or None
+    statistics_favourite_count: int or None
+    statistics_retweet_count: int or None
+    statistics_like_count: int or None
+    statistics_love_count: int or None
+    statistics_comment_count: int or None
+    statistics_haha_count: int or None
+    statistics_sad_count: int or None
+    statistics_share_count: int or None
+    statistics_thankful_count: int or None
+    statistics_wow_count: int or None
+    statistics_angry_count: int or None
+    statistics_dislike_count: int or None
+    postUrl: str
+    page: str
+    api_qtype: str
 
 
 @dataclass
 class TelegramTrackedPost(TrackedPost):
-    telegram_message: str
-    # XXX here try to overwrite with defaults the parent attributes that are always zero in case of Telegram
-    # page: str = ''
-
-    #    es_record = {
-    #        "channel_id": message.to_id.channel_id,
-    #        "message_id": message.id,
-    #        "message": message.message,
-    #        "date": int(message.date.timestamp()),
-    #        "via_bot_id": message.via_bot_id,
-    #        "channel_name": channel_name,
-    #        "grouped_id": message.grouped_id,
-    #        "post_author": message.post_author,
-    #        "post": message.post,
-    #        "silent": message.silent,
-    #        "retrieved_utc": retrieved_utc,
-    #        "updated_utc": retrieved_utc,
-    #    }
+    platform: str = "Telegram"
+    capture_type: str = "omms_telegram_collection"
+    group_name: str = ""
+    page: str = ""
+    api_qtype: str = "telethon"
+    # No URLs for individual messages in Telegram
+    postUrl: str = ""
+    # These stats are undefined for Telegram
+    sharing_account_statuses_count: int = None
+    statistics_favourite_count: int = None
+    statistics_retweet_count: int = None
+    statistics_like_count: int = None
+    statistics_love_count: int = None
+    statistics_comment_count: int = None
+    statistics_haha_count: int = None
+    statistics_sad_count: int = None
+    statistics_share_count: int = None
+    statistics_thankful_count: int = None
+    statistics_wow_count: int = None
+    statistics_angry_count: int = None
+    statistics_dislike_count: int = None
 
     @classmethod
     def from_telethon(
@@ -86,38 +82,24 @@ class TelegramTrackedPost(TrackedPost):
         if not batch_time:
             batch_time = current_time
 
-        #    searched_site: str
-        #    searched_link: str
-        #    api_qtype: str
-        #    cat: str
-        #    page: str
-        #    found_link: str
-        #    postUrl: str
-        #    content_type: str
-        #    caption: str
-        #    description: str
-        #    message: str
-        #    sharing_account_handle: str
-
-        # XXX change this to return cls(..)
-        attributes = {
-            "platform": "Telegram",
-            "batch_capture_time": str(current_time.timestamp()),
-            "batch_capture_time_readable": str(current_time),
-            "precise_capture_time": str(batch_time.timestamp()),
-            "precise_capture_time_readable": str(batch_time),
-            "created_time": str(telethon_msg.date.timestamp()),
-            "cat": news_source["cat"],
-            "message": telethon_msg.message,
-            "searched_site": news_source["short.link"],
-            "searched_link": news_source["short.link"],
-            "found_link": matched_link.url,
-            "content_type": "link",
-            "caption": matched_link.caption,
-            "description": matched_link.description,
-            "message": telethon_msg.message,
-            "sharing_account_handle": channel["chats"][0]["username"],
-            # XXX next step: how to bring channel metadata here?? do we need quick channel object.. probably yes, since we want follower count too
-        }
-        #        return cls(**attributes)
-        return cls(telegram_message=attributes["message"], platform="Telegram")
+        return cls(
+            batch_capture_time=str(current_time.timestamp()),
+            batch_capture_time_readable=str(current_time),
+            precise_capture_time=str(batch_time.timestamp()),
+            precise_capture_time_readable=str(batch_time),
+            created_time=str(telethon_msg.date.timestamp()),
+            cat=news_source["cat"],
+            message=telethon_msg.message,
+            searched_site=news_source["short.link"],
+            searched_link=news_source["short.link"],
+            found_link=matched_link.url,
+            content_type="link",
+            caption=matched_link.caption,
+            description=matched_link.description,
+            page=channel["chats"][0]["username"],
+            sharing_account_handle=channel["chats"][0]["username"],
+            sharing_account_id=channel["full_chat"]["id"],
+            sharing_account_follower_count=channel["full_chat"]["participants_count"],
+            statistics_view_count=telethon_msg.views,
+            message_id=telethon_msg.id,
+        )

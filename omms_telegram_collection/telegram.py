@@ -17,9 +17,9 @@ def links_with_metadata(message):
 
     # Links in Telegram messages can be embedded (then found in message.media), or part of the
     # text body of the message (when we can find them through message.entities)
-    if hasattr(message.media, "webpage"):
+    if hasattr(message.media, "webpage") and hasattr(message.media.webpage, "url"):
         webpage = message.media.webpage
-        links.append(LC(webpage.url, webpage.title, webpage.description))
+        links.append(LC(webpage.url, webpage.title or "", webpage.description or ""))
 
     if not message.entities:
         return links
