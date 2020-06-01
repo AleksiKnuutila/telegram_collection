@@ -19,11 +19,11 @@ from omms_telegram_collection.telegram import (
 )
 from omms_telegram_collection.models import TelegramTrackedPost
 
-from dataclasses import make_dataclass
+from dataclasses import make_dataclass, asdict
 
-from datetime import datetime
-import pandas as pd
-import sys
+from datetime import datetime, timedelta
+import pandas as pd, csv
+import sys, os
 
 
 def match_links(msg, tracked_sites):
@@ -47,7 +47,7 @@ def tracked_news_sources(filename):
     return pd.read_csv(filename, encoding="ISO-8859-1").to_dict("records")
 
 
-def write_messages_to_file(messages, filename=None):
+def write_messages_to_file(messages, filename):
     """[summary]
 
     Arguments:
@@ -56,8 +56,13 @@ def write_messages_to_file(messages, filename=None):
     Keyword Arguments:
         filename {[type]} -- [description] (default: {None})
     """
-    # XXX take the target file as argument?
-    pass
+
+    output = [list(asdict(messages[0]).keys())]
+    output += [list(asdict(x).values()) for x in messages]
+
+    with open(filename, "w") as f:
+        writer = csv.writer(f)
+        writer.writerows(output)
 
 
 def main(inputargs=None):
@@ -69,7 +74,8 @@ def main(inputargs=None):
     client = SyncTelegramClient()
 
     tracked_sites = tracked_news_sources(config["tracked_sites_csv_filename"])
-    batch_start = datetime.now()
+    batch_start = to_date = datetime.now()
+    from_date = to_date - timedelta(days=7)
 
     all_matched_messages = []
 
@@ -99,7 +105,11 @@ def main(inputargs=None):
         ]
         all_matched_messages = all_matched_messages + matching_messages
 
-    write_messages_to_file(all_matched_messages)
+    filename = "telegram_matches-{} to {}.csv".format(
+        from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")
+    )
+    filename = os.path.join(config["output_data_dir"], filename)
+    write_messages_to_file(all_matched_messages, filename)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 api_id: 982658
 api_hash: 32ba50d2421a176c2c270d8fb18a88fd
 tracked_sites_csv_filename: link-targets-NEW.csv
+output_data_dir: data/2020-06/
 tracked_telegram_channels:
   - TommyRobinsonNews
