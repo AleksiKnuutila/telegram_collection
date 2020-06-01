@@ -23,6 +23,7 @@ from dataclasses import make_dataclass, asdict
 
 from datetime import datetime, timedelta
 import pandas as pd, csv
+import pytz
 import sys, os
 
 
@@ -74,7 +75,7 @@ def main(inputargs=None):
     client = SyncTelegramClient()
 
     tracked_sites = tracked_news_sources(config["tracked_sites_csv_filename"])
-    batch_start = to_date = datetime.now()
+    batch_start = to_date = datetime.now().replace(tzinfo=pytz.UTC)
     from_date = to_date - timedelta(days=7)
 
     all_matched_messages = []
@@ -83,7 +84,7 @@ def main(inputargs=None):
 
         channel_info = client.get_channel_info(channel_name)
 
-        recent_messages = client.fetch_messages(channel_name, 300, 0)
+        recent_messages = client.fetch_messages_since(channel_name, from_date)
         # Skip forwarded messages to avoid doublecounting views (cf. how Telegram views are calculated)
         original_messages = [msg for msg in recent_messages if not is_forwarded(msg)]
 

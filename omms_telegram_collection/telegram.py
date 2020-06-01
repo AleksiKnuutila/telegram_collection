@@ -9,6 +9,8 @@ from telethon.tl import functions
 from omms_telegram_collection.common import logger, config
 
 from dataclasses import make_dataclass
+from itertools import takewhile
+import pytz
 
 
 def links_with_metadata(message):
@@ -37,18 +39,21 @@ def links_with_metadata(message):
 
 
 def is_forwarded(message):
-    #                  if 'fwd_from' in obj and obj['fwd_from']:
-    #                    forwarded='forwarded'
-    #                    if obj['fwd_from']['channel_id']:
-    #                      forwarded = str(obj['fwd_from']['channel_id'])
-    #                    if obj['fwd_from']['channel_post']:
-    #                      forwarded = forwarded + ':' + str(obj['fwd_from']['channel_post'])
+    if hasattr(message, "fwd_from") and message.fwd_from:
+        return True
     return False
 
 
 class SyncTelegramClient:
     def __init__(self):
         self._client = TelegramClient("session", config["api_id"], config["api_hash"])
+
+    def fetch_messages_since(self, channel, from_date, limit=1000):
+        if not self._client.is_connected():
+            self._client.connect()
+        itermsgs = self._client.iter_messages(channel, limit)
+        messages = takewhile(lambda x: x.date > from_date, itermsgs)
+        return list(messages)
 
     def fetch_messages(self, channel, size=100, max_id=None, min_id=None):
         """Method to fetch messages from a specific channel / group"""
@@ -73,15 +78,3 @@ class SyncTelegramClient:
             return client(
                 functions.channels.GetFullChannelRequest(channel=channel)
             ).to_dict()
-
-    def get_channel_users(self, channel, limit=1000):
-        """method to get participants from channel (we might not have privileges to get this data)
-        getting some errors about permissions"""
-        with self._client as client:
-            try:
-                participants = client.get_participants(channel, limit)
-            except ChatAdminRequiredError as e:
-                # TODO: ???
-                raise e
-
-        return participants
