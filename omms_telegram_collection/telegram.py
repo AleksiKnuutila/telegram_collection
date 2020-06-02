@@ -1,20 +1,17 @@
-"""Helper methods for data collection from telegram"""
+"""Methods for accessing Telegram API and parsing messages"""
 
-import json
+from dataclasses import make_dataclass
+import itertools as it
+import re
 
-from telethon.errors import ChatAdminRequiredError
 from telethon.sync import TelegramClient
 from telethon.tl import functions
 
 from omms_telegram_collection.common import logger, config
 
-from dataclasses import make_dataclass
-import itertools as it
-import pytz
-import re
-
 
 def links_with_metadata(message):
+    """Extract links and their description from Telethon message"""
     LC = make_dataclass("LinkMetaData", ["url", "caption", "description"])
     links = []
 
@@ -40,17 +37,12 @@ def links_with_metadata(message):
 
 
 def match_links(msg, tracked_sites):
-    """ Find links from Telegram messages that match tracked news sources
-
-    Arguments:
-        msg {[type]} -- [description]
-        tracked_sites {[type]} -- [description]
-    """
+    """Find links from Telegram messages that match tracked news sources"""
     links = links_with_metadata(msg)
 
     for link, site in it.product(links, tracked_sites):
         if re.search(
-            "(^|[\.\/]){}(/|$)".format(site["short.link"]), link.url, re.IGNORECASE
+            r"(^|[\.\/]){}(/|$)".format(site["short.link"]), link.url, re.IGNORECASE
         ):
             return make_dataclass("MatchedLink", ["link", "matched_site"])(link, site)
 
@@ -58,16 +50,25 @@ def match_links(msg, tracked_sites):
 
 
 def is_forwarded(message):
+    """Confirm whether Telegram message is forwarded"""
     if hasattr(message, "fwd_from") and message.fwd_from:
         return True
     return False
 
 
 class SyncTelegramClient:
+    """Class for getting messages from Telegram API"""
+
     def __init__(self):
         self._client = TelegramClient("session", config["api_id"], config["api_hash"])
 
     def fetch_messages_since(self, channel, from_date, limit=1000):
+        """Get messages since a particular date
+
+        Arguments:
+            channel {str} -- Name or ID of channel
+            from_date {datetime} -- Messages after this date will be return
+        """
         logger.debug(
             "Fetching messages since %s from channel %s" % (str(from_date), channel)
         )
@@ -98,6 +99,11 @@ class SyncTelegramClient:
         return data
 
     def get_channel_info(self, channel):
+        """Return metadata about Telegram channel
+
+        Arguments:
+            channel {str} -- Channel name or ID number
+        """
         with self._client as client:
             return client(
                 functions.channels.GetFullChannelRequest(channel=channel)

@@ -10,41 +10,43 @@ Options:
  --version    Show the version.
 """
 
-from omms_telegram_collection.from_docopt import from_docopt
+from datetime import datetime, timedelta
+import csv
+import os
+from dataclasses import asdict
+
+import pandas as pd
+import pytz
+
 from omms_telegram_collection.common import config, logger
 from omms_telegram_collection.telegram import (
     SyncTelegramClient,
-    links_with_metadata,
     is_forwarded,
     match_links,
 )
 from omms_telegram_collection.models import TelegramTrackedPost
 
-from dataclasses import make_dataclass, asdict
-import itertools as it
-
-from datetime import datetime, timedelta
-import pandas as pd, csv
-import re
-import pytz
-import sys, os
-
 
 def tracked_news_sources(filename):
+    """Return list of news sources tracked by OMMS
+
+    Arguments:
+        filename {str} -- CSV file with list
+
+    Returns:
+        list of dicts -- sources with metadata
+    """
     # From dataframe to list of dicts
     return pd.read_csv(filename, encoding="ISO-8859-1").to_dict("records")
 
 
 def write_messages_to_file(messages, filename):
-    """[summary]
+    """Write CSV file with collected messages
 
     Arguments:
-        messages {[type]} -- [description]
-
-    Keyword Arguments:
-        filename {[type]} -- [description] (default: {None})
+        messages {list of Telethon message objects} --
+        filename {str} --
     """
-
     output = [list(asdict(messages[0]).keys())]
     output += [list(asdict(x).values()) for x in messages]
 
