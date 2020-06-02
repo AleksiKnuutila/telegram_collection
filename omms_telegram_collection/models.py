@@ -1,7 +1,5 @@
 from datetime import datetime
-
 from pydantic.dataclasses import dataclass
-import attr
 
 
 @dataclass
@@ -87,7 +85,8 @@ class TelegramTrackedPost(TrackedPost):
             batch_capture_time_readable=str(current_time),
             precise_capture_time=str(batch_time.timestamp()),
             precise_capture_time_readable=str(batch_time),
-            created_time=str(telethon_msg.date.timestamp()),
+            # created_time=str(telethon_msg.date.timestamp()),
+            created_time=str(telethon_msg.date),
             cat=news_source["cat"],
             message=telethon_msg.message,
             searched_site=news_source["short.link"],

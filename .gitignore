@@ -241,3 +241,6 @@ com_crashlytics_export_strings.xml.vscode
 
 # Project-specific
 link-targets-NEW.csvdata
+session.session
+data/
+data/2020-06/telegram_matches-2020-05-25 to 2020-06-01.csv

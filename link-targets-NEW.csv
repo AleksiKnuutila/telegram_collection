@@ -1,4 +1,6 @@
 short.link,cat,subcat,youtube,youtube_ID,exclude,youtube_uploads_ID,youtube_channel_ID
+elpais.com,mainstream,,,,,,
+summit.news,world_alternative,,,,,,
 bbc.co.uk,mainstream,,bbcnews,,,UU16niRr50-MSBwiO3YDb3RA,UC16niRr50-MSBwiO3YDb3RA
 thesun.co.uk,mainstream,,thesunnewspaper,,,UUIzXayRP7-P0ANpq-nD-h5g,UCIzXayRP7-P0ANpq-nD-h5g
 dailymail.co.uk,mainstream,,MailOnlineVideo,,,UUw3fku0sH3qA3c3pZeJwdAw,UCw3fku0sH3qA3c3pZeJwdAw
@@ -12,7 +14,6 @@ dailystar.co.uk,mainstream,,DailyStarOnline,,inactive,,
 thetimes.co.uk,mainstream,,timesonlinevideo,,,UUF-VP3b3oH0XASqsLI5rnLw,UCF-VP3b3oH0XASqsLI5rnLw
 nytimes.com,mainstream,,,,,,
 washingtonpost.com,mainstream,,,,,,
-elpais.com,mainstream,,,,,,
 lemonde.fr,mainstream,,,,,,
 repubblica.it,mainstream,,,,,,
 cnn.com,mainstream,,,,,,
@@ -91,7 +92,6 @@ voanews.com,world_alternative,,VOAvideo,,,UUVSNOxehfALut52NbkfRBaA,UCVSNOxehfALu
 tapnewswire.com,world_alternative,,,,,,
 interfax.com,world_alternative,,,,only russian/ukrainian account,,
 prisonplanet.com,world_alternative,,,,,,
-summit.news,world_alternative,,,,,,
 en.newsner.com,world_alternative,,,,,,
 ucrtv.com,world_alternative,,,,,,
 thezeitgeistmovement.com,world_alternative,,,,,,
