@@ -13,9 +13,16 @@ with open("config.yaml", "r") as conf, open("secret.yaml", "r") as secr:
     config = yaml.safe_load(conf)
     secret_config = yaml.safe_load(secr)
 cli_args = {}
-if "pytest" not in sys.modules["__main__"].__package__:
+if (
+    sys.modules["__main__"].__package__ is None
+    or "pytest" not in sys.modules["__main__"].__package__
+):
     cli_args = docopt(
         sys.modules["__main__"].__doc__, version="omms_telegram_collection 0.1"
     )
     cli_args = {k.replace("--", ""): v for k, v in cli_args.items() if "--" in k and v}
+    if "tracked-telegram-channels" in cli_args:
+        cli_args["tracked-telegram-channels"] = cli_args[
+            "tracked-telegram-channels"
+        ].split(",")
 config = {**config, **secret_config, **cli_args}
