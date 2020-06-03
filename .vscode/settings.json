@@ -6,5 +6,5 @@
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.cwd": "/Users/aleksi/Projects/oii/omms_telegram_collection/omms_telegram_collection"
+    "python.testing.cwd": "/Users/aleksi/Projects/oii/telegram_collection"
 }

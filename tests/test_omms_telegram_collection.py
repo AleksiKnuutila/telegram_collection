@@ -1,7 +1,6 @@
 import pytest
 
-# import omms_telegram_collection
-from omms_telegram_collection.telegram import (
+from telegram_collection.telegram import (
     SyncTelegramClient,
     links_with_metadata,
     is_forwarded,
@@ -9,9 +8,9 @@ from omms_telegram_collection.telegram import (
     match_links,
 )
 
-from omms_telegram_collection.__main__ import tracked_news_sources
+from telegram_collection.__main__ import tracked_news_sources
 
-from omms_telegram_collection.common import config
+from telegram_collection.common import config
 from urllib.request import urlopen
 from telethon.tl.types import InputMessagesFilterUrl
 from datetime import datetime, timedelta
@@ -27,7 +26,7 @@ def telethon_messages_with_link():
 
 
 def test_match_links(telethon_messages_with_link):
-    tracked_sites = tracked_news_sources(config["tracked_sites_csv_filename"])
+    tracked_sites = tracked_news_sources(config["tracked-sites-csv-filename"])
     match = match_links(telethon_messages_with_link, tracked_sites)
     assert "tr.news" in match.link.url
     assert match.link.description or match.link.caption

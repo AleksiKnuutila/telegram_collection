@@ -4,7 +4,7 @@ from pydantic.dataclasses import dataclass
 
 @dataclass
 class TrackedPost:
-    """ Parent class for data collected by OMMS scrapers for various platforms """
+    """ Parent class for data collected by scrapers for various platforms """
 
     batch_capture_time: datetime
     batch_capture_time_readable: str
@@ -50,7 +50,7 @@ class TrackedPost:
 @dataclass
 class TelegramTrackedPost(TrackedPost):
     platform: str = "Telegram"
-    capture_type: str = "omms_telegram_collection"
+    capture_type: str = "telegram_collection"
     group_name: str = ""
     page: str = ""
     api_qtype: str = "telethon"
@@ -75,7 +75,7 @@ class TelegramTrackedPost(TrackedPost):
     def from_telethon(
         cls, telethon_msg, *, channel, matched_link, news_source, batch_time=None
     ):
-        """ Map Telethon's message object to OMMS internal datastructure and construct new object """
+        """ Map Telethon's message object to the scraper's internal datastructure and construct new object """
         current_time = datetime.now()
         if not batch_time:
             batch_time = current_time

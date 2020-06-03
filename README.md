@@ -1,5 +1,5 @@
 # Introduction
-omms_telegram_collection is Collect Telegram data for OMMS. 
+telegram_collection collects Telegram data from a defined set of channels
 # Use
 # Requirements
 
@@ -7,7 +7,7 @@ omms_telegram_collection is Collect Telegram data for OMMS.
 ## From Github
 To obtain the latest version of this package:
 ```
-pip install git+https://github.com/AleksiKnuutila/omms_telegram_collection.git
+pip install git+https://github.com/AleksiKnuutila/telegram_collection.git
 ```
 
 ## Development
@@ -15,8 +15,7 @@ If you wish to work on this project locally, clone this repo and install it in
 development mode:
 
 ```
-git clone https://github.com/AleksiKnuutila/omms_telegram_collection.git
-cd omms_telegram_collection
-make dev
+git clone https://github.com/AleksiKnuutila/telegram_collection.git
+cd telegram_collection
 ```
 

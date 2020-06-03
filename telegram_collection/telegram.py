@@ -7,7 +7,7 @@ import re
 from telethon.sync import TelegramClient
 from telethon.tl import functions
 
-from omms_telegram_collection.common import logger, config
+from telegram_collection.common import logger, config
 
 
 def links_with_metadata(message):
@@ -60,7 +60,7 @@ class SyncTelegramClient:
     """Class for getting messages from Telegram API"""
 
     def __init__(self):
-        self._client = TelegramClient("session", config["api_id"], config["api_hash"])
+        self._client = TelegramClient("session", config["api-id"], config["api-hash"])
 
     def fetch_messages_since(self, channel, from_date, limit=1000):
         """Get messages since a particular date

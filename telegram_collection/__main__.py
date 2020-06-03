@@ -1,34 +1,45 @@
-"""omms_telegram_collection.
+"""telegram_collection.
 
 Usage:
-omms_telegram_collection -h | --help
-omms_telegram_collection --version
+telegram_collection [--api-id ID] [--api-hash HASH] 
+    [--tracked-sites-csv-filename FILENAME]
+    [--output-data-dir DIR] 
+    [--tracked-telegram-channels CHANNEL1,CHANNEL2]
+telegram_collection -h | --help
+telegram_collection --version
+
+Options can be read from config.yaml and secret.yaml.
 
 Options:
 
- -h --help    Show this screen.
- --version    Show the version.
+ -h --help                           Show this screen.
+ --version                           Show the version.
+ --api-id api_id                     Set API ID (can be read from config)
+ --api-hash api_hash                 Set API hash
+ --tracked-sites-csv-filename fn     Filename for CSV with tracked sites
+ --output-data-dir dir               Directory where CSV files are written
+ --tracked-telegram-channels c1,c2   Telegram channels to examine, comma-delimited
 """
 
-from datetime import datetime, timedelta
-import csv
 import os
+import csv
+from datetime import datetime, timedelta
 from dataclasses import asdict
 
 import pandas as pd
 import pytz
 
-from omms_telegram_collection.common import config, logger
-from omms_telegram_collection.telegram import (
+from telegram_collection.common import config, logger
+from telegram_collection.telegram import (
     SyncTelegramClient,
     is_forwarded,
     match_links,
 )
-from omms_telegram_collection.models import TelegramTrackedPost
+from telegram_collection.models import TelegramTrackedPost
 
 
 def tracked_news_sources(filename):
-    """Return list of news sources tracked by OMMS
+    """Return list of news sources tracked by project
 
     Arguments:
         filename {str} -- CSV file with list
@@ -55,21 +66,18 @@ def write_messages_to_file(messages, filename):
         writer.writerows(output)
 
 
-def main(inputargs=None):
-    """Main entry point of omms_telegram_collection"""
-    # if inputargs is None:
-    #    inputargs = sys.argv[1:] if len(sys.argv) > 1 else ""
-    #    args = from_docopt(argv=inputargs, docstring=__doc__)
+def main():
+    """Main entry point of telegram_collection"""
 
     client = SyncTelegramClient()
 
-    tracked_sites = tracked_news_sources(config["tracked_sites_csv_filename"])
+    tracked_sites = tracked_news_sources(config["tracked-sites-csv-filename"])
     batch_start = to_date = datetime.now().replace(tzinfo=pytz.UTC)
     from_date = to_date - timedelta(days=7)
 
     all_matched_messages = []
 
-    for channel_name in config["tracked_telegram_channels"]:
+    for channel_name in config["tracked-telegram-channels"]:
 
         try:
             channel_info = client.get_channel_info(channel_name)
@@ -107,7 +115,7 @@ def main(inputargs=None):
     filename = "telegram_matches-{} to {}.csv".format(
         from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")
     )
-    filename = os.path.join(config["output_data_dir"], filename)
+    filename = os.path.join(config["output-data-dir"], filename)
     logger.debug(
         "Writing CSV with %s records to %s" % (len(all_matched_messages), filename)
     )

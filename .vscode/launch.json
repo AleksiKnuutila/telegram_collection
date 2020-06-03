@@ -9,12 +9,8 @@
             "type": "python",
             "request": "launch",
             //            "program": "${file}",
-            "module": "omms_telegram_collection",
-            "cwd": "/Users/aleksi/Projects/oii/omms_telegram_collection/omms_telegram_collection",
-            "args": [
-                "-m",
-                "omms_telegram_collection"
-            ]
+            "module": "telegram_collection",
+            "cwd": "/Users/aleksi/Projects/oii/telegram_collection",
             "console": "integratedTerminal"
         }
     ]
