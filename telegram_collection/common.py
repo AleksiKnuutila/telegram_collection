@@ -18,7 +18,7 @@ if (
     or "pytest" not in sys.modules["__main__"].__package__
 ):
     cli_args = docopt(
-        sys.modules["__main__"].__doc__, version="omms_telegram_collection 0.1"
+        sys.modules["__main__"].__doc__, version="telegram_collection 0.1"
     )
     cli_args = {k.replace("--", ""): v for k, v in cli_args.items() if "--" in k and v}
     if "tracked-telegram-channels" in cli_args:
