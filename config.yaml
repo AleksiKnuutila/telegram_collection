@@ -1,4 +1,4 @@
-tracked-sites-csv-filename: link-targets-NEW.csv
+tracked-sites-csv-filename: targets.csv
 output-data-dir: data/2020-06/
 tracked-telegram-channels:
   - akhbartasnim
