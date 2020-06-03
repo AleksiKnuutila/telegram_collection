@@ -22,7 +22,6 @@ Options:
 """
 
 import os
-import csv
 from datetime import datetime, timedelta
 from dataclasses import asdict
 import json
@@ -40,7 +39,7 @@ from telegram_collection.models import TelegramTrackedPost
 
 
 def write_messages_to_file(messages, filename):
-    """Write CSV file with collected messages
+    """Write JSON file with collected messages
 
     Arguments:
         messages {list of Telethon message objects} --
