@@ -30,7 +30,7 @@ Example:
 python -m telegram_collection --tracked-telegram-channels bbcworldnews,infowars
 ```
 
-Code for matching scraper data structure is in telegram_collection/__main__.py. json_exports.py writes data in JSON.
+Code for matching scraper data structure is in telegram_collection/\__main__.py. json_exports.py writes data in JSON.
 
 # Setting up
 
