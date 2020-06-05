@@ -6,6 +6,8 @@ import re
 
 from telethon.sync import TelegramClient
 from telethon.tl import functions
+from cachier import cachier
+from datetime import timedelta
 
 from telegram_collection.common import logger, config
 
@@ -56,6 +58,11 @@ def is_forwarded(message):
     return False
 
 
+def hash_params(args, kwds):
+    """Hash arguments to get_channel_with_cache without looking at `client`"""
+    return args[1]
+
+
 class SyncTelegramClient:
     """Class for getting messages from Telegram API"""
 
@@ -98,6 +105,7 @@ class SyncTelegramClient:
 
         return data
 
+    @cachier(stale_after=timedelta(weeks=2), hash_params=hash_params)
     def get_channel_info(self, channel):
         """Return metadata about Telegram channel
 
