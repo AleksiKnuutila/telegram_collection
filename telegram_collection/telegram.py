@@ -8,6 +8,7 @@ from telethon.sync import TelegramClient
 from telethon.tl import functions
 from cachier import cachier
 from datetime import timedelta
+from random import randint
 
 from telegram_collection.common import logger, config
 
@@ -105,7 +106,8 @@ class SyncTelegramClient:
 
         return data
 
-    @cachier(stale_after=timedelta(weeks=2), hash_params=hash_params)
+    # This is cached with variable expiry to avoid overloading the API
+    @cachier(stale_after=timedelta(days=randint(10, 50)), hash_params=hash_params)
     def get_channel_info(self, channel):
         """Return metadata about Telegram channel
 
