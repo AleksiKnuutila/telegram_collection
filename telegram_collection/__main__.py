@@ -66,13 +66,6 @@ def write_messages_to_file(messages, filename):
         writer.writerows(output)
 
 
-#
-# def get_channel_with_cache(client, channel_name):
-#    """Return channel metadata, wrapped with cachier"""
-#    channel_info = "moe"
-#    print("moe")
-
-
 def main():
     """Main entry point of telegram_collection"""
 
