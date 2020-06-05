@@ -249,3 +249,4 @@ secret.yaml
 session.session
 link-targets-NEW.csv
 telegram_collection/public.keys
+session.*
