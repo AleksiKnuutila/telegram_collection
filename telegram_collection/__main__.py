@@ -25,9 +25,11 @@ import os
 import csv
 from datetime import datetime, timedelta
 from dataclasses import asdict
+import time
 
 import pandas as pd
 import pytz
+import telethon
 
 from telegram_collection.common import config, logger
 from telegram_collection.telegram import (
@@ -73,7 +75,7 @@ def main():
 
     tracked_sites = tracked_news_sources(config["tracked-sites-csv-filename"])
     batch_start = to_date = datetime.now().replace(tzinfo=pytz.UTC)
-    from_date = to_date - timedelta(days=14)
+    from_date = to_date - timedelta(days=7)
 
     all_matched_messages = []
 
@@ -81,7 +83,7 @@ def main():
 
         try:
             channel_info = client.get_channel_info(channel_name)
-        except ValueError:
+        except (ValueError, telethon.errors.rpcerrorlist.UsernameInvalidError):
             logger.warning("Tracked channel %s doesn't exists" % channel_name)
             continue
 
@@ -116,6 +118,7 @@ def main():
         from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")
     )
     filename = os.path.join(config["output-data-dir"], filename)
+
     if all_matched_messages:
         logger.debug(
             "Writing CSV with %s records to %s" % (len(all_matched_messages), filename)
@@ -123,6 +126,9 @@ def main():
         write_messages_to_file(all_matched_messages, filename)
     else:
         logger.warning("No matched messages")
+
+    # Temporary solution while building cache of channel metadata
+    time.sleep(10)
 
 
 if __name__ == "__main__":
