@@ -1,6 +1,8 @@
 from datetime import datetime
 from pydantic.dataclasses import dataclass
 
+from typing import Union
+
 
 @dataclass
 class TrackedPost:
@@ -18,8 +20,8 @@ class TrackedPost:
     message: str
     sharing_account_handle: str
     sharing_account_id: int
-    sharing_account_follower_count: int or None
-    statistics_view_count: int or None
+    sharing_account_follower_count: Union[int, None]
+    statistics_view_count: Union[int, None]
     created_time: str
     searched_site: str
     searched_link: str
@@ -29,19 +31,19 @@ class TrackedPost:
     platform: str
     capture_type: str
     group_name: str
-    sharing_account_statuses_count: int or None
-    statistics_favourite_count: int or None
-    statistics_retweet_count: int or None
-    statistics_like_count: int or None
-    statistics_love_count: int or None
-    statistics_comment_count: int or None
-    statistics_haha_count: int or None
-    statistics_sad_count: int or None
-    statistics_share_count: int or None
-    statistics_thankful_count: int or None
-    statistics_wow_count: int or None
-    statistics_angry_count: int or None
-    statistics_dislike_count: int or None
+    sharing_account_statuses_count: Union[int, None]
+    statistics_favourite_count: Union[int, None]
+    statistics_retweet_count: Union[int, None]
+    statistics_like_count: Union[int, None]
+    statistics_love_count: Union[int, None]
+    statistics_comment_count: Union[int, None]
+    statistics_haha_count: Union[int, None]
+    statistics_sad_count: Union[int, None]
+    statistics_share_count: Union[int, None]
+    statistics_thankful_count: Union[int, None]
+    statistics_wow_count: Union[int, None]
+    statistics_angry_count: Union[int, None]
+    statistics_dislike_count: Union[int, None]
     postUrl: str
     page: str
     api_qtype: str
@@ -95,7 +97,6 @@ class TelegramTrackedPost(TrackedPost):
             content_type="link",
             caption=matched_link.caption,
             description=matched_link.description,
-            page=channel["chats"][0]["username"],
             sharing_account_handle=channel["chats"][0]["username"],
             sharing_account_id=channel["full_chat"]["id"],
             sharing_account_follower_count=channel["full_chat"]["participants_count"],

@@ -73,7 +73,7 @@ def main():
 
     tracked_sites = tracked_news_sources(config["tracked-sites-csv-filename"])
     batch_start = to_date = datetime.now().replace(tzinfo=pytz.UTC)
-    from_date = to_date - timedelta(days=7)
+    from_date = to_date - timedelta(days=14)
 
     all_matched_messages = []
 
@@ -116,10 +116,13 @@ def main():
         from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")
     )
     filename = os.path.join(config["output-data-dir"], filename)
-    logger.debug(
-        "Writing CSV with %s records to %s" % (len(all_matched_messages), filename)
-    )
-    write_messages_to_file(all_matched_messages, filename)
+    if all_matched_messages:
+        logger.debug(
+            "Writing CSV with %s records to %s" % (len(all_matched_messages), filename)
+        )
+        write_messages_to_file(all_matched_messages, filename)
+    else:
+        logger.warning("No matched messages")
 
 
 if __name__ == "__main__":
