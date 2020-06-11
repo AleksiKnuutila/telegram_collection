@@ -130,9 +130,6 @@ def main():
     else:
         logger.warning("No matched messages")
 
-    # Temporary solution while building cache of channel metadata
-    time.sleep(10)
-
 
 if __name__ == "__main__":
     main()
