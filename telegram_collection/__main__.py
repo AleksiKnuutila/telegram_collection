@@ -86,6 +86,9 @@ def main():
         except (ValueError, telethon.errors.rpcerrorlist.UsernameInvalidError):
             logger.warning("Tracked channel %s doesn't exists" % channel_name)
             continue
+        except TypeError:
+            logger.warning("Tracking username that is not a channel: %s" % channel_name)
+            continue
 
         recent_messages = client.fetch_messages_since(channel_name, from_date)
         # Skip forwarded messages to avoid doublecounting views (cf. how Telegram views are calculated)

@@ -107,7 +107,7 @@ class SyncTelegramClient:
         return data
 
     # This is cached with variable expiry to avoid overloading the API
-    @cachier(stale_after=timedelta(days=randint(10, 50)), hash_params=hash_params)
+    #    @cachier(stale_after=timedelta(days=randint(10, 50)), hash_params=hash_params)
     def get_channel_info(self, channel):
         """Return metadata about Telegram channel
 
