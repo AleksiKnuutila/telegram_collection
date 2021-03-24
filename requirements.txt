@@ -64,7 +64,7 @@ pyzmq==19.0.1
 qtconsole==4.7.4
 QtPy==1.9.0
 regex==2020.5.14
-rsa==4.0
+rsa==4.1
 Send2Trash==1.5.0
 six==1.15.0
 Telethon==1.14.0
