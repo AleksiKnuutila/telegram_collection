@@ -46,7 +46,7 @@ pluggy==0.13.1
 prometheus-client==0.8.0
 prompt-toolkit==3.0.5
 ptyprocess==0.6.0
-py==1.8.1
+py==1.10.0
 pyaes==1.6.1
 pyasn1==0.4.8
 pydantic==1.5.1
